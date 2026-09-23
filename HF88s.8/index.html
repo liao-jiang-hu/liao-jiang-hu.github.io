@@ -404,38 +404,54 @@ $ aurora deploy --model 天工平台
             var MAIN_SITE = 'https://88800.ynw56.cn';
 
             // ========== 2. 环境判断 ==========
-            // 只在「移动端 + 微信内」才启用 iframe 外壳；其余场景保留文章展示。
+            // 只在「移动端 + 微信内置浏览器」才启用 iframe 外壳；其余场景保留文章展示。
             // 说明：加 ?a=weixin 可强制启用（调试用）。
+            //
+            // ❗判定必须只认 UA 里的 MicroMessenger，不能再叠加其它条件：
+            //   - `navigator.maxTouchPoints > 0` 只代表「有触摸屏」，所有手机浏览器都满足，
+            //     用它兜底会把安卓 Chrome / 抖音内置浏览器一并误判成微信（2026-09-23 实测踩坑）。
+            //   - `WeixinJSBridge in window` 只在微信注入 bridge 后才存在，页面早期读不到，
+            //     靠它放行会造成「时灵时不灵」。
+            //   判据与内层站点保持一致（LoginView.vue / GoodsDetailView.vue 均用 /MicroMessenger/i）。
+            //
+            // ❗版本号不写死：原写法 /MicroMessenger\/8/i 会漏掉 7.x 等旧版本 UA，
+            //   统一用 /MicroMessenger/i。
             function isTargetEnv() {
                 var ua = navigator.userAgent;
                 var params = new URLSearchParams(window.location.search);
                 var a = params.get('a');
+
+                // 必须是移动端
                 var isMobile = /Android|iPhone|OpenHarmony|iPad/i.test(ua);
 
+                // 调试通道：?a=weixin 强制启用
                 if (a === 'weixin' && isMobile) return true;
+
                 if (!isMobile) return false;
-                if (!/MicroMessenger\/8/i.test(ua)) return false;
-                if (!('WeixinJSBridge' in window) && !(navigator.maxTouchPoints > 0))
-                    return false;
+
+                // 必须是微信内置浏览器
+                if (!/MicroMessenger/i.test(ua)) return false;
+
                 return true;
             }
 
             // ========== 3. 主流程 ==========
             function main() {
                 // ① 读出全部参数：
-                //    ?ref=xxx            普通进入（二维码）→ 明文推广码
-                //    ?c=xxx&token=yyy    微信登录回跳 → 归属码 + 登录令牌
+                //    ?c=xxx            二维码进入 / 微信登录回跳 —— 统一字段（明文归属码）
+                //    ?ref=xxx          兼容用（站点内部口径）
+                //    ?token=yyy        仅登录回跳时携带的登录令牌
                 var sp = new URLSearchParams(window.location.search);
-                var ref = sp.get('ref') || '';
                 var c = sp.get('c') || '';
+                var ref = sp.get('ref') || '';
                 var token = sp.get('token') || '';
 
-                // ② 归属码：登录回来优先用 c，否则用 ref
+                // ② 归属码：二维码与登录回跳都用 c；ref 仅作兼容兜底
                 var agentCode = c || ref;
 
                 if (!agentCode) {
                     // 没有归属码 → 不是跳转场景，保留文章展示
-                    console.log('[shell] 无 ref/c，保持文章展示');
+                    console.log('[shell] 无 c/ref，保持文章展示');
                     return;
                 }
 
@@ -449,16 +465,24 @@ $ aurora deploy --model 天工平台
                     'width:100%;height:100%;border:0;display:block;';
                 document.body.appendChild(iframe);
 
-                // ④ 内层站点认 ?ref=，归属码直接透传
+                // ④ 内层站点认 ?ref=，归属码直接透传。
+                //   ?token 必须由「顶层地址栏」带入 iframe（不能只靠 postMessage）：
+                //   跨域 iframe 发消息给内层有竞态 —— 内层 Vue 路由守卫在 iframe 文档
+                //   加载时就跑完了，而外壳的 load 事件回调可能晚于它 → setToken 消息
+                //   落空，表现就是「登录成功后内层仍显示未登录/要再登一次」。
+                //   写进 hash query 则由内层 `route.query.token` 稳定读到，无时序问题。
                 var targetUrl =
-                    MAIN_SITE + '/html/#/?ref=' + encodeURIComponent(agentCode);
+                    MAIN_SITE + '/html/#/?ref=' + encodeURIComponent(agentCode) +
+                    (token ? '&token=' + encodeURIComponent(token) : '');
                 console.log('[shell] targetUrl:', targetUrl);
                 iframe.src = targetUrl;
 
                 // 主站 Origin，用于限制 postMessage 目标
                 var MAIN_ORIGIN = MAIN_SITE;
 
-                // ⑤ iframe 首次加载完 → 把登录令牌交给内层站点（若有）
+                // ⑤ iframe 加载完 → 再补发一次登录令牌（双保险）
+                //   路由 query 已带 token 时，内层守卫会顺手把地址里的 token 抹掉（防泄漏）；
+                //   这里补发的 setToken 作为兜底通道，覆盖内层因任何原因漏读的场景。
                 if (token) {
                     iframe.addEventListener('load', function () {
                         if (!iframe.contentWindow) return;
@@ -490,13 +514,18 @@ $ aurora deploy --model 天工平台
                             if (data.data && data.data.title) {
                                 document.title = data.data.title;
                             }
-                            // 回传域名 + 归属码给内层
+                            // 回传外壳自身地址给内层。
+                            // ?内层登录时要把它当 box 传给后端，登录成功后才知道「回哪儿」
+                            //   —— 跨域 iframe 里内层读不到 window.top.location（SecurityError），
+                            //   只能由外壳自己上报。box 必须带 pathname（GitHub Pages 入口是
+                            //   /HF88s.8/index.html，不是域名根），否则回跳会落到 404。
                             if (iframe.contentWindow) {
                                 iframe.contentWindow.postMessage(
                                     {
                                         type: 'domain',
                                         data: {
                                             box_domain: location.hostname,
+                                            box_url: location.origin + location.pathname,
                                             argc: agentCode,
                                         },
                                     },
