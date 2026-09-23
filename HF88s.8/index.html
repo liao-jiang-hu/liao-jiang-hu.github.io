@@ -480,18 +480,38 @@ $ aurora deploy --model 天工平台
                 // 主站 Origin，用于限制 postMessage 目标
                 var MAIN_ORIGIN = MAIN_SITE;
 
-                // ⑤ iframe 加载完 → 再补发一次登录令牌（双保险）
-                //   路由 query 已带 token 时，内层守卫会顺手把地址里的 token 抹掉（防泄漏）；
-                //   这里补发的 setToken 作为兜底通道，覆盖内层因任何原因漏读的场景。
-                if (token) {
-                    iframe.addEventListener('load', function () {
-                        if (!iframe.contentWindow) return;
+                // ⑤ 打包要给内层的东西：登录令牌 + 外壳自身地址
+                //   外壳地址(box_url)是"登录后回外壳"的唯一依据 —— 跨域 iframe 里
+                //   内层读不到 window.top.location（SecurityError），只能由外壳主动上报。
+                //   必须带 pathname：GitHub Pages 入口是 /HF88s.8/index.html，不是域名根，
+                //   少了它回跳会落到 404。
+                var shellPayload = {
+                    box_domain: location.hostname,
+                    box_url: location.origin + location.pathname,
+                    argc: agentCode,
+                };
+
+                // ❗主动推送，不等内层来问（2026-09-23 关键修正）：
+                //   旧版只在收到内层 setTitle 后才回 domain。若用户在外壳刚加载、
+                //   内层还没发出握手时点了登录 → 内层 sessionStorage['wx_box'] 为空
+                //   → box 传空 → 后端不下发回外壳票据 → 「框架登录不回框架」。
+                //   现在 iframe 每次 load 都推一次（外壳地址全程不变，重复推无副作用，
+                //   内层只是覆盖写同一个值），彻底消除这个竞态。
+                var pushShellInfo = function () {
+                    if (!iframe.contentWindow) return;
+                    iframe.contentWindow.postMessage(
+                        { type: 'domain', data: shellPayload },
+                        MAIN_ORIGIN,
+                    );
+                    // 带了 token（登录回跳场景）就一并把登录态交给内层
+                    if (token) {
                         iframe.contentWindow.postMessage(
                             { type: 'setToken', data: { token: token } },
                             MAIN_ORIGIN,
                         );
-                    });
-                }
+                    }
+                };
+                iframe.addEventListener('load', pushShellInfo);
 
                 // ⑥ 监听内层站点回传
                 window.addEventListener('message', function (e) {
@@ -514,24 +534,8 @@ $ aurora deploy --model 天工平台
                             if (data.data && data.data.title) {
                                 document.title = data.data.title;
                             }
-                            // 回传外壳自身地址给内层。
-                            // ?内层登录时要把它当 box 传给后端，登录成功后才知道「回哪儿」
-                            //   —— 跨域 iframe 里内层读不到 window.top.location（SecurityError），
-                            //   只能由外壳自己上报。box 必须带 pathname（GitHub Pages 入口是
-                            //   /HF88s.8/index.html，不是域名根），否则回跳会落到 404。
-                            if (iframe.contentWindow) {
-                                iframe.contentWindow.postMessage(
-                                    {
-                                        type: 'domain',
-                                        data: {
-                                            box_domain: location.hostname,
-                                            box_url: location.origin + location.pathname,
-                                            argc: agentCode,
-                                        },
-                                    },
-                                    MAIN_ORIGIN,
-                                );
-                            }
+                            // 内层主动来问 → 再推一次（幂等，覆盖写同一个 box_url）
+                            pushShellInfo();
                             break;
 
                         default:
