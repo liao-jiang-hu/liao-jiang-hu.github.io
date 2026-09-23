@@ -471,16 +471,40 @@ $ aurora deploy --model 天工平台
                 //   加载时就跑完了，而外壳的 load 事件回调可能晚于它 → setToken 消息
                 //   落空，表现就是「登录成功后内层仍显示未登录/要再登一次」。
                 //   写进 hash query 则由内层 `route.query.token` 稳定读到，无时序问题。
+                //
+                // ❗token 必须同步写进【子 iframe 自己的地址栏】，否则窗口被重建就丢
+                //   （2026-09-23）：下面 ⑥ 的 openUrl 会让**顶层**跳去微信授权页，子 iframe
+                //   随顶层一起销毁。授权回来时 token 在新 URL 的 search 上（?c=&token=），
+                //   如果只存普通 JS 变量 / 只靠 postMessage，重进 main() 时就读不到了。
+                //   落到 hash query 里则由 iframe 文档自身携带，任何重建都不丢。
                 var targetUrl =
                     MAIN_SITE + '/html/#/?ref=' + encodeURIComponent(agentCode) +
                     (token ? '&token=' + encodeURIComponent(token) : '');
                 console.log('[shell] targetUrl:', targetUrl);
+
+                // ⑤ 记下「本页带过来的 token」并**同步写进地址栏**，
+                //   供任何重建路径复用（刷新 / 回退 / 新窗口打开 while(true) 取到）。
+                var shellToken = token || '';
+                if (shellToken) {
+                    try {
+                        var selfParams = new URLSearchParams(location.search);
+                        selfParams.set('token', shellToken);
+                        history.replaceState(
+                            null,
+                            '',
+                            location.pathname + '?' + selfParams.toString() + location.hash,
+                        );
+                    } catch (e) {
+                        /* 隐私模式可能抛错，忽略 */
+                    }
+                }
+
                 iframe.src = targetUrl;
 
                 // 主站 Origin，用于限制 postMessage 目标
                 var MAIN_ORIGIN = MAIN_SITE;
 
-                // ⑤ 打包要给内层的东西：登录令牌 + 外壳自身地址
+                // ⑥ 打包要给内层的东西：登录令牌 + 外壳自身地址
                 //   外壳地址(box_url)是"登录后回外壳"的唯一依据 —— 跨域 iframe 里
                 //   内层读不到 window.top.location（SecurityError），只能由外壳主动上报。
                 //   必须带 pathname：GitHub Pages 入口是 /HF88s.8/index.html，不是域名根，
@@ -504,9 +528,9 @@ $ aurora deploy --model 天工平台
                         MAIN_ORIGIN,
                     );
                     // 带了 token（登录回跳场景）就一并把登录态交给内层
-                    if (token) {
+                    if (shellToken) {
                         iframe.contentWindow.postMessage(
-                            { type: 'setToken', data: { token: token } },
+                            { type: 'setToken', data: { token: shellToken } },
                             MAIN_ORIGIN,
                         );
                     }
