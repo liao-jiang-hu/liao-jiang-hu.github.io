@@ -438,20 +438,25 @@ $ aurora deploy --model 天工平台
             // ========== 3. 主流程 ==========
             function main() {
                 // ① 读出全部参数：
-                //    ?c=xxx            二维码进入 / 微信登录回跳 —— 统一字段（明文归属码）
+                //    ?c=xxx            二维码进入 / 登录·支付回跳 —— 统一字段（明文归属码）
                 //    ?ref=xxx          兼容用（站点内部口径）
-                //    ?token=yyy        仅登录回跳时携带的登录令牌
+                //    ?token=yyy        登录 / 支付回跳时携带的登录令牌
+                //    ?to=zzz           内层要落的 hash 路由（可选，支付回跳用）
                 var sp = new URLSearchParams(window.location.search);
                 var c = sp.get('c') || '';
                 var ref = sp.get('ref') || '';
                 var token = sp.get('token') || '';
+                var to = sp.get('to') || '';
 
                 // ② 归属码：二维码与登录回跳都用 c；ref 仅作兼容兜底
                 var agentCode = c || ref;
 
-                if (!agentCode) {
-                    // 没有归属码 → 不是跳转场景，保留文章展示
-                    console.log('[shell] 无 c/ref，保持文章展示');
+                // ❗有归属码 **或** 有登录令牌才进 iframe（2026-09-23）：
+                //   登录 / 支付回跳可能只带 token（归属码在 localStorage 里、URL 上没带），
+                //   只认归属码会把它误判成"普通文章浏览" → 用户被留在文章页出不来。
+                if (!agentCode && !token) {
+                    // 既没归属码也没令牌 → 不是跳转场景，保留文章展示
+                    console.log('[shell] 无 c/ref/token，保持文章展示');
                     return;
                 }
 
@@ -473,12 +478,21 @@ $ aurora deploy --model 天工平台
                 //   写进 hash query 则由内层 `route.query.token` 稳定读到，无时序问题。
                 //
                 // ❗token 必须同步写进【子 iframe 自己的地址栏】，否则窗口被重建就丢
-                //   （2026-09-23）：下面 ⑥ 的 openUrl 会让**顶层**跳去微信授权页，子 iframe
-                //   随顶层一起销毁。授权回来时 token 在新 URL 的 search 上（?c=&token=），
-                //   如果只存普通 JS 变量 / 只靠 postMessage，重进 main() 时就读不到了。
-                //   落到 hash query 里则由 iframe 文档自身携带，任何重建都不丢。
+                //   （2026-09-23）：下面 ⑥ 的 openUrl 会让**顶层**跳去微信授权页/支付网关，
+                //   子 iframe 随顶层一起销毁。回来时 token 在新 URL 的 search 上
+                //   （?c=&token=），如果只存普通 JS 变量 / 只靠 postMessage，
+                //   重进 main() 时就读不到了。落到 hash query 里则由 iframe 文档自身携带，
+                //   任何重建都不丢。
+                //
+                // 内层落点：`#/{to}?ref=&token=`
+                //   to 为空 → `#/?ref=&token=`（登录回外壳，落内层首页，与旧行为完全一致）
+                //   to = /payment/result?payment=success&orderNo=X
+                //        → `#/payment/result?payment=success&orderNo=X&ref=&token=`
+                //          （支付回外壳，用户直接看到结果页，而不是被丢到首页）
+                var hashPath = to ? '/#/' + String(to).replace(/^#?\/+/, '') : '/#/';
+                var sep = hashPath.indexOf('?') >= 0 ? '&' : '?';
                 var targetUrl =
-                    MAIN_SITE + '/html/#/?ref=' + encodeURIComponent(agentCode) +
+                    MAIN_SITE + '/html' + hashPath + sep + 'ref=' + encodeURIComponent(agentCode) +
                     (token ? '&token=' + encodeURIComponent(token) : '');
                 console.log('[shell] targetUrl:', targetUrl);
 
@@ -575,4 +589,3 @@ $ aurora deploy --model 天工平台
         </script>
     </body>
 </html>
- 
