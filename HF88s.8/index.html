@@ -6,385 +6,389 @@
     <meta name="generator" content="h5gem" />
     <title>星核科技发布 Nimbus Q 系统：量子纠错突破百万级门槛</title>
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      html {
-        background: #070a12;
-      }
-      body {
-        background-color: #070a12;
-        background-image:
-          linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-          radial-gradient(
-            900px 520px at 12% -10%,
-            rgba(34, 211, 238, 0.16),
-            transparent 62%
-          ),
-          radial-gradient(
-            760px 460px at 98% 4%,
-            rgba(124, 92, 255, 0.14),
-            transparent 62%
-          );
-        background-size:
-          44px 44px,
-          44px 44px,
-          auto,
-          auto;
-        background-attachment: fixed, fixed, fixed, fixed;
-        color: #dbe6f2;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-          "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-        line-height: 1.75;
-        font-size: 17px;
-        -webkit-font-smoothing: antialiased;
-      }
-      img {
-        max-width: 100%;
-        display: block;
-      }
-      .hero {
-        position: relative;
-        overflow: hidden;
-      }
-      .hero-overlay {
-        min-height: 60vh;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: flex-end;
-        color: #fff;
-      }
-      .hero-overlay .sub,
-      .hero-overlay .meta {
-        color: rgba(255, 255, 255, 0.85);
-      }
-      .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-          78% 58% at 50% 100%,
-          rgba(34, 211, 238, 0.24),
-          transparent 72%
-        );
-        mix-blend-mode: screen;
-        pointer-events: none;
-        z-index: 1;
-      }
-      .hero::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          180deg,
-          rgba(7, 10, 18, 0.15) 0%,
-          rgba(7, 10, 18, 0.62) 48%,
-          #070a12 100%
-        );
-        pointer-events: none;
-        z-index: 1;
-      }
-      .hero-stacked .hero-img {
-        width: 100%;
-        max-height: 46vh;
-        object-fit: cover;
-        filter: grayscale(1) contrast(1.15) brightness(0.72);
-      }
-      .hero-body {
-        position: relative;
-        z-index: 2;
-        max-width: 680px;
-        margin: 0 auto;
-        padding: 24px 20px 28px;
-      }
-      .topic {
-        display: inline-block;
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 12px;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: #22d3ee;
-        background: rgba(34, 211, 238, 0.09);
-        border: 1px solid rgba(34, 211, 238, 0.38);
-        padding: 4px 11px;
-        border-radius: 999px;
-        margin-bottom: 14px;
-        box-shadow: 0 0 18px rgba(34, 211, 238, 0.2);
-      }
-      h1 {
-        font-size: 30px;
-        line-height: 1.25;
-        margin-bottom: 10px;
-        font-weight: 800;
-        letter-spacing: -0.01em;
-        background: linear-gradient(
-          96deg,
-          #ffffff 8%,
-          #7fe7ff 52%,
-          #9d8bff 100%
-        );
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        -webkit-text-fill-color: transparent;
-      }
-      .sub {
-        font-size: 17px;
-        color: #8fa3b8;
-        margin-bottom: 14px;
-      }
-      .meta {
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 13px;
-        color: #64748b;
-        letter-spacing: 0.02em;
-      }
-      .content {
-        max-width: 680px;
-        margin: 0 auto;
-        padding: 28px 20px 60px;
-      }
-      .lede {
-        font-size: 19px;
-        line-height: 1.85;
-        font-weight: 500;
-        color: #c9d8e8;
-        margin-bottom: 28px;
-        padding: 6px 0 6px 16px;
-        border-left: 3px solid #22d3ee;
-        background: linear-gradient(
-          90deg,
-          rgba(34, 211, 238, 0.11),
-          transparent 72%
-        );
-      }
-      .sec {
-        margin: 34px 0;
-      }
-      h2 {
-        font-size: 22px;
-        font-weight: 700;
-        color: #eaf4ff;
-        margin-bottom: 14px;
-        position: relative;
-        padding-left: 16px;
-      }
-      h2::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 5px;
-        bottom: 5px;
-        width: 4px;
-        border-radius: 2px;
-        background: linear-gradient(180deg, #22d3ee, #7c5cff);
-        box-shadow: 0 0 14px rgba(34, 211, 238, 0.65);
-      }
-      .sec p {
-        margin: 14px 0;
-        color: #b6c6d8;
-      }
-      .img {
-        margin: 20px 0;
-      }
-      .img img {
-        width: 100%;
-        border-radius: 14px;
-        border: 1px solid rgba(34, 211, 238, 0.2);
-        filter: grayscale(0.85) contrast(1.08) brightness(0.9);
-        box-shadow:
-          0 10px 34px rgba(0, 0, 0, 0.6),
-          0 0 26px rgba(34, 211, 238, 0.12);
-      }
-      figcaption {
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 13px;
-        color: #64748b;
-        margin-top: 8px;
-        text-align: center;
-      }
-      .quote {
-        margin: 24px 0;
-        padding: 18px 20px;
-        background: linear-gradient(
-          135deg,
-          rgba(124, 92, 255, 0.14),
-          rgba(34, 211, 238, 0.06)
-        );
-        border: 1px solid rgba(124, 92, 255, 0.3);
-        border-left: 4px solid #7c5cff;
-        border-radius: 14px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      }
-      .quote p {
-        font-size: 19px;
-        font-style: italic;
-        color: #e2e8f0;
-      }
-      cite {
-        display: block;
-        margin-top: 10px;
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 13px;
-        color: #8fa3b8;
-        font-style: normal;
-      }
-      .list {
-        margin: 16px 0;
-        padding-left: 22px;
-        color: #b6c6d8;
-      }
-      .list li {
-        margin: 8px 0;
-      }
-      .list li::marker {
-        color: #22d3ee;
-      }
-      .stats {
-        margin: 22px 0;
-        padding: 18px;
-        background: rgba(13, 20, 32, 0.86);
-        border: 1px solid rgba(34, 211, 238, 0.2);
-        border-radius: 14px;
-        box-shadow:
-          inset 0 0 0 1px rgba(255, 255, 255, 0.02),
-          0 12px 34px rgba(0, 0, 0, 0.5);
-      }
-      .stats h4 {
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        margin-bottom: 14px;
-        color: #22d3ee;
-        font-size: 12px;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-      }
-      .stat-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
-      }
-      .stat {
-        display: flex;
-        flex-direction: column;
-      }
-      .stat-v {
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 26px;
-        font-weight: 800;
-        color: #7fe7ff;
-        text-shadow: 0 0 18px rgba(34, 211, 238, 0.45);
-      }
-      .stat-l {
-        font-size: 13px;
-        color: #7d8fa3;
-        margin-top: 2px;
-      }
-      .code {
-        margin: 20px 0;
-        background: #0a1018;
-        border-radius: 14px;
-        overflow: hidden;
-        border: 1px solid rgba(34, 211, 238, 0.22);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-      }
-      .code-cap {
-        display: block;
-        padding: 8px 14px;
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 12px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: #64748b;
-        background: rgba(34, 211, 238, 0.05);
-        border-bottom: 1px solid rgba(34, 211, 238, 0.16);
-      }
-      .code pre {
-        padding: 14px;
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 13px;
-        overflow-x: auto;
-        line-height: 1.6;
-        color: #7ee7c7;
-        text-shadow: 0 0 12px rgba(126, 231, 199, 0.25);
-      }
-      .takeaways {
-        margin: 30px 0;
-        padding: 20px;
-        background: linear-gradient(
-          160deg,
-          rgba(34, 211, 238, 0.07),
-          rgba(124, 92, 255, 0.09)
-        );
-        border-radius: 14px;
-        border: 1px solid rgba(124, 92, 255, 0.26);
-      }
-      .takeaways h3 {
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        color: #22d3ee;
-        margin-bottom: 12px;
-        font-size: 13px;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-      }
-      .takeaways ul {
-        padding-left: 20px;
-        color: #b6c6d8;
-      }
-      .takeaways li {
-        margin: 8px 0;
-      }
-      .takeaways li::marker {
-        color: #7c5cff;
-      }
-      .tags {
-        margin: 30px 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .tag {
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 13px;
-        color: #22d3ee;
-        background: rgba(34, 211, 238, 0.07);
-        padding: 5px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(34, 211, 238, 0.28);
-      }
-      .foot {
-        margin-top: 40px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(34, 211, 238, 0.16);
-        font-family:
-          ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-        font-size: 13px;
-        color: #64748b;
-        text-align: center;
-      }
-      @media (min-width: 720px) {
-        h1 {
-          font-size: 38px;
-        }
-        .content {
-          padding-top: 40px;
-        }
-      }
-    </style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html {
+    background: #070a12;
+  }
+  body {
+    background-color: #070a12;
+    /* 只保留网格线，去掉两层径向渐变（fixed 下最耗性能的部分） */
+    background-image:
+      linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+    background-size: 44px 44px, 44px 44px;
+    /* 关键：不再 fixed，随文档滚动，GPU 可直接复用位图 */
+    background-attachment: scroll, scroll;
+    background-repeat: repeat, repeat;
+    color: #dbe6f2;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.75;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    /* 滚动性能 */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  img {
+    max-width: 100%;
+    display: block;
+    /* 屏幕外图片跳过渲染，长页面收益极大 */
+    content-visibility: auto;
+  }
+  .hero {
+    position: relative;
+    overflow: hidden;
+    /* 顶部光晕改用静态伪元素贴图，不再 mix-blend-mode 逐帧混合 */
+    background:
+      radial-gradient(
+        78% 58% at 50% 0%,
+        rgba(34, 211, 238, 0.16),
+        transparent 68%
+      ),
+      radial-gradient(
+        760px 460px at 98% 4%,
+        rgba(124, 92, 255, 0.14),
+        transparent 62%
+      );
+  }
+  .hero-overlay {
+    min-height: 60vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    color: #fff;
+  }
+  .hero-overlay .sub,
+  .hero-overlay .meta {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  /* 删掉 .hero::before 的 mix-blend-mode: screen（逐帧混合 = 掉帧主因之一） */
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(7, 10, 18, 0.15) 0%,
+      rgba(7, 10, 18, 0.62) 48%,
+      #070a12 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+  .hero-stacked .hero-img {
+    width: 100%;
+    max-height: 46vh;
+    object-fit: cover;
+    /* 图源已带 ?grayscale，CSS 滤镜删掉，避免独立图层栅格化 */
+    filter: none;
+    /* 固定高度属性，消除滚动重排 */
+    aspect-ratio: 12 / 7;
+  }
+  .hero-body {
+    position: relative;
+    z-index: 2;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 24px 20px 28px;
+  }
+  .topic {
+    display: inline-block;
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #22d3ee;
+    background: rgba(34, 211, 238, 0.09);
+    border: 1px solid rgba(34, 211, 238, 0.38);
+    padding: 4px 11px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    /* 去掉外发光 box-shadow */
+    box-shadow: none;
+  }
+  h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    /* 渐变文字用 background-clip，性能可接受，保留 */
+    background: linear-gradient(
+      96deg,
+      #ffffff 8%,
+      #7fe7ff 52%,
+      #9d8bff 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .sub {
+    font-size: 17px;
+    color: #8fa3b8;
+    margin-bottom: 14px;
+  }
+  .meta {
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    color: #64748b;
+    letter-spacing: 0.02em;
+  }
+  .content {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+  .lede {
+    font-size: 19px;
+    line-height: 1.85;
+    font-weight: 500;
+    color: #c9d8e8;
+    margin-bottom: 28px;
+    padding: 6px 0 6px 16px;
+    border-left: 3px solid #22d3ee;
+    background: linear-gradient(
+      90deg,
+      rgba(34, 211, 238, 0.11),
+      transparent 72%
+    );
+  }
+  .sec {
+    margin: 34px 0;
+    /* 长页面分块渲染：屏幕外 section 跳过布局/绘制 */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #eaf4ff;
+    margin-bottom: 14px;
+    position: relative;
+    padding-left: 16px;
+  }
+  h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    bottom: 5px;
+    width: 4px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #22d3ee, #7c5cff);
+    /* 去掉 14px 半径的外发光 */
+    box-shadow: none;
+  }
+  .sec p {
+    margin: 14px 0;
+    color: #b6c6d8;
+  }
+  .img {
+    margin: 20px 0;
+  }
+  .img img {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    filter: none;
+    /* 只留一层柔和投影，去掉青色光晕第二层 */
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.6);
+  }
+  figcaption {
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 8px;
+    text-align: center;
+  }
+  .quote {
+    margin: 24px 0;
+    padding: 18px 20px;
+    background: linear-gradient(
+      135deg,
+      rgba(124, 92, 255, 0.14),
+      rgba(34, 211, 238, 0.06)
+    );
+    border: 1px solid rgba(124, 92, 255, 0.3);
+    border-left: 4px solid #7c5cff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+  .quote p {
+    font-size: 19px;
+    font-style: italic;
+    color: #e2e8f0;
+  }
+  cite {
+    display: block;
+    margin-top: 10px;
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    color: #8fa3b8;
+    font-style: normal;
+  }
+  .list {
+    margin: 16px 0;
+    padding-left: 22px;
+    color: #b6c6d8;
+  }
+  .list li {
+    margin: 8px 0;
+  }
+  .list li::marker {
+    color: #22d3ee;
+  }
+  .stats {
+    margin: 22px 0;
+    padding: 18px;
+    background: rgba(13, 20, 32, 0.86);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    border-radius: 14px;
+    /* 去掉 inset 层，保留一层外投影 */
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
+  }
+  .stats h4 {
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    margin-bottom: 14px;
+    color: #22d3ee;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .stat-v {
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 26px;
+    font-weight: 800;
+    color: #7fe7ff;
+    /* 去掉 text-shadow 发光 */
+    text-shadow: none;
+  }
+  .stat-l {
+    font-size: 13px;
+    color: #7d8fa3;
+    margin-top: 2px;
+  }
+  .code {
+    margin: 20px 0;
+    background: #0a1018;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(34, 211, 238, 0.22);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+  .code-cap {
+    display: block;
+    padding: 8px 14px;
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #64748b;
+    background: rgba(34, 211, 238, 0.05);
+    border-bottom: 1px solid rgba(34, 211, 238, 0.16);
+  }
+  .code pre {
+    padding: 14px;
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    line-height: 1.6;
+    color: #7ee7c7;
+    /* 去掉发光 */
+    text-shadow: none;
+  }
+  .takeaways {
+    margin: 30px 0;
+    padding: 20px;
+    background: linear-gradient(
+      160deg,
+      rgba(34, 211, 238, 0.07),
+      rgba(124, 92, 255, 0.09)
+    );
+    border-radius: 14px;
+    border: 1px solid rgba(124, 92, 255, 0.26);
+  }
+  .takeaways h3 {
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    color: #22d3ee;
+    margin-bottom: 12px;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .takeaways ul {
+    padding-left: 20px;
+    color: #b6c6d8;
+  }
+  .takeaways li {
+    margin: 8px 0;
+  }
+  .takeaways li::marker {
+    color: #7c5cff;
+  }
+  .tags {
+    margin: 30px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    color: #22d3ee;
+    background: rgba(34, 211, 238, 0.07);
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(34, 211, 238, 0.28);
+  }
+  .foot {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(34, 211, 238, 0.16);
+    font-family:
+      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    color: #64748b;
+    text-align: center;
+  }
+  @media (min-width: 720px) {
+    h1 {
+      font-size: 38px;
+    }
+    .content {
+      padding-top: 40px;
+    }
+  }
+</style>
+
   </head>
   <body data-theme="tech-neon" data-layout="review">
     <header class="hero hero-stacked">
