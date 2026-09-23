@@ -1,676 +1,520 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content="h5gem" />
-    <title>星核科技发布 Nimbus Q 系统：量子纠错突破百万级门槛</title>
-    <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  html {
-    background: #fff;
-  }
-  body {
-    background-color: #fff;
-    /* 只保留网格线，去掉两层径向渐变（fixed 下最耗性能的部分） */
-    background-image:
-      linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
-    background-size: 44px 44px, 44px 44px;
-    /* 关键：不再 fixed，随文档滚动，GPU 可直接复用位图 */
-    background-attachment: scroll, scroll;
-    background-repeat: repeat, repeat;
-    color: #dbe6f2;
-    font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-      "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    line-height: 1.75;
-    font-size: 17px;
-    -webkit-font-smoothing: antialiased;
-    /* 滚动性能 */
-    overscroll-behavior: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  img {
-    max-width: 100%;
-    display: block;
-    /* 屏幕外图片跳过渲染，长页面收益极大 */
-    content-visibility: auto;
-  }
-  .hero {
-    position: relative;
-    overflow: hidden;
-    /* 顶部光晕改用静态伪元素贴图，不再 mix-blend-mode 逐帧混合 */
-    background:
-      radial-gradient(
-        78% 58% at 50% 0%,
-        rgba(34, 211, 238, 0.16),
-        transparent 68%
-      ),
-      radial-gradient(
-        760px 460px at 98% 4%,
-        rgba(124, 92, 255, 0.14),
-        transparent 62%
-      );
-  }
-  .hero-overlay {
-    min-height: 60vh;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: flex-end;
-    color: #fff;
-  }
-  .hero-overlay .sub,
-  .hero-overlay .meta {
-    color: rgba(255, 255, 255, 0.85);
-  }
-  /* 删掉 .hero::before 的 mix-blend-mode: screen（逐帧混合 = 掉帧主因之一） */
-  .hero::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(7, 10, 18, 0.15) 0%,
-      rgba(7, 10, 18, 0.62) 48%,
-      #070a12 100%
-    );
-    pointer-events: none;
-    z-index: 1;
-  }
-  .hero-stacked .hero-img {
-    width: 100%;
-    max-height: 46vh;
-    object-fit: cover;
-    /* 图源已带 ?grayscale，CSS 滤镜删掉，避免独立图层栅格化 */
-    filter: none;
-    /* 固定高度属性，消除滚动重排 */
-    aspect-ratio: 12 / 7;
-  }
-  .hero-body {
-    position: relative;
-    z-index: 2;
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 24px 20px 28px;
-  }
-  .topic {
-    display: inline-block;
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #22d3ee;
-    background: rgba(34, 211, 238, 0.09);
-    border: 1px solid rgba(34, 211, 238, 0.38);
-    padding: 4px 11px;
-    border-radius: 999px;
-    margin-bottom: 14px;
-    /* 去掉外发光 box-shadow */
-    box-shadow: none;
-  }
-  h1 {
-    font-size: 30px;
-    line-height: 1.25;
-    margin-bottom: 10px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-    /* 渐变文字用 background-clip，性能可接受，保留 */
-    background: linear-gradient(
-      96deg,
-      #ffffff 8%,
-      #7fe7ff 52%,
-      #9d8bff 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-  }
-  .sub {
-    font-size: 17px;
-    color: #8fa3b8;
-    margin-bottom: 14px;
-  }
-  .meta {
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 13px;
-    color: #64748b;
-    letter-spacing: 0.02em;
-  }
-  .content {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 28px 20px 60px;
-  }
-  .lede {
-    font-size: 19px;
-    line-height: 1.85;
-    font-weight: 500;
-    color: #c9d8e8;
-    margin-bottom: 28px;
-    padding: 6px 0 6px 16px;
-    border-left: 3px solid #22d3ee;
-    background: linear-gradient(
-      90deg,
-      rgba(34, 211, 238, 0.11),
-      transparent 72%
-    );
-  }
-  .sec {
-    margin: 34px 0;
-    /* 长页面分块渲染：屏幕外 section 跳过布局/绘制 */
-    content-visibility: auto;
-    contain-intrinsic-size: auto 600px;
-  }
-  h2 {
-    font-size: 22px;
-    font-weight: 700;
-    color: #eaf4ff;
-    margin-bottom: 14px;
-    position: relative;
-    padding-left: 16px;
-  }
-  h2::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 5px;
-    bottom: 5px;
-    width: 4px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, #22d3ee, #7c5cff);
-    /* 去掉 14px 半径的外发光 */
-    box-shadow: none;
-  }
-  .sec p {
-    margin: 14px 0;
-    color: #b6c6d8;
-  }
-  .img {
-    margin: 20px 0;
-  }
-  .img img {
-    width: 100%;
-    border-radius: 14px;
-    border: 1px solid rgba(34, 211, 238, 0.2);
-    filter: none;
-    /* 只留一层柔和投影，去掉青色光晕第二层 */
-    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.6);
-  }
-  figcaption {
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 13px;
-    color: #64748b;
-    margin-top: 8px;
-    text-align: center;
-  }
-  .quote {
-    margin: 24px 0;
-    padding: 18px 20px;
-    background: linear-gradient(
-      135deg,
-      rgba(124, 92, 255, 0.14),
-      rgba(34, 211, 238, 0.06)
-    );
-    border: 1px solid rgba(124, 92, 255, 0.3);
-    border-left: 4px solid #7c5cff;
-    border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  }
-  .quote p {
-    font-size: 19px;
-    font-style: italic;
-    color: #e2e8f0;
-  }
-  cite {
-    display: block;
-    margin-top: 10px;
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 13px;
-    color: #8fa3b8;
-    font-style: normal;
-  }
-  .list {
-    margin: 16px 0;
-    padding-left: 22px;
-    color: #b6c6d8;
-  }
-  .list li {
-    margin: 8px 0;
-  }
-  .list li::marker {
-    color: #22d3ee;
-  }
-  .stats {
-    margin: 22px 0;
-    padding: 18px;
-    background: rgba(13, 20, 32, 0.86);
-    border: 1px solid rgba(34, 211, 238, 0.2);
-    border-radius: 14px;
-    /* 去掉 inset 层，保留一层外投影 */
-    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
-  }
-  .stats h4 {
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    margin-bottom: 14px;
-    color: #22d3ee;
-    font-size: 12px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-  .stat {
-    display: flex;
-    flex-direction: column;
-  }
-  .stat-v {
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 26px;
-    font-weight: 800;
-    color: #7fe7ff;
-    /* 去掉 text-shadow 发光 */
-    text-shadow: none;
-  }
-  .stat-l {
-    font-size: 13px;
-    color: #7d8fa3;
-    margin-top: 2px;
-  }
-  .code {
-    margin: 20px 0;
-    background: #0a1018;
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid rgba(34, 211, 238, 0.22);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-  }
-  .code-cap {
-    display: block;
-    padding: 8px 14px;
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #64748b;
-    background: rgba(34, 211, 238, 0.05);
-    border-bottom: 1px solid rgba(34, 211, 238, 0.16);
-  }
-  .code pre {
-    padding: 14px;
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 13px;
-    overflow-x: auto;
-    line-height: 1.6;
-    color: #7ee7c7;
-    /* 去掉发光 */
-    text-shadow: none;
-  }
-  .takeaways {
-    margin: 30px 0;
-    padding: 20px;
-    background: linear-gradient(
-      160deg,
-      rgba(34, 211, 238, 0.07),
-      rgba(124, 92, 255, 0.09)
-    );
-    border-radius: 14px;
-    border: 1px solid rgba(124, 92, 255, 0.26);
-  }
-  .takeaways h3 {
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    color: #22d3ee;
-    margin-bottom: 12px;
-    font-size: 13px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-  .takeaways ul {
-    padding-left: 20px;
-    color: #b6c6d8;
-  }
-  .takeaways li {
-    margin: 8px 0;
-  }
-  .takeaways li::marker {
-    color: #7c5cff;
-  }
-  .tags {
-    margin: 30px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .tag {
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 13px;
-    color: #22d3ee;
-    background: rgba(34, 211, 238, 0.07);
-    padding: 5px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(34, 211, 238, 0.28);
-  }
-  .foot {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(34, 211, 238, 0.16);
-    font-family:
-      ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-    font-size: 13px;
-    color: #64748b;
-    text-align: center;
-  }
-  @media (min-width: 720px) {
-    h1 {
-      font-size: 38px;
-    }
-    .content {
-      padding-top: 40px;
-    }
-  }
-</style>
-
-  </head>
-  <body data-theme="tech-neon" data-layout="review">
-    <header class="hero hero-stacked">
-      <img
-        class="hero-img"
-        src="https://picsum.photos/seed/7x38bcjo/1200/700?grayscale"
-        alt=""
-        loading="lazy"
-      />
-      <div class="hero-body">
-        <span class="topic">量子计算</span>
-        <h1>星核科技发布 Nimbus Q 系统：量子纠错突破百万级门槛</h1>
-        <p class="sub">一份关于 量子纠错与超导量子 的深度观察</p>
-        <p class="meta">周见深 · @lab15 · 2026-04-04 · 7 分钟阅读</p>
-      </div>
-    </header>
-    <main class="content">
-      <p class="lede">
-        过去一年，量子计算领域最受关注的莫过于 量子纠错。原力计算 凭借 天工平台
-        让这一趋势突破百万级，业界普遍认为这将带来降本拐点。
-      </p>
-      <section class="sec">
-        <h2>从实验室到量子计算</h2>
-        <p>
-          在现象级的想象力面前，过去的经验正在迅速失效。量子跃迁最新发布的
-          玄武芯片 在 量子优越性 上实现了增长 12 倍。
-        </p>
-        <ul class="list">
-          <li>超导量子 在量子计算中的应用日益广泛</li>
-          <li>原力计算 持续加码 Aurora 引擎</li>
-          <li>下降 47%的提升已可复现</li>
-          <li>降本拐点正在成为行业共识</li>
-          <li>颠覆性的边界正在形成</li>
-        </ul>
-        <div class="stats">
-          <h4>核心参数</h4>
-          <div class="stat-grid">
-            <div class="stat">
-              <span class="stat-v">98.7%</span
-              ><span class="stat-l">用户规模</span>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="generator" content="h5gem" />
+        <title>星核科技发布Nimbus 系统：量子计算迎来性能跃迁</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                background: #fffdf7;
+                color: #1a1a1a;
+                font-family: Georgia, 'Times New Roman', 'Songti SC', serif;
+                line-height: 1.75;
+                font-size: 17px;
+                -webkit-font-smoothing: antialiased;
+            }
+            img {
+                max-width: 100%;
+                display: block;
+            }
+            .hero {
+                position: relative;
+            }
+            .hero-overlay {
+                min-height: 60vh;
+                background-size: cover;
+                background-position: center;
+                display: flex;
+                align-items: flex-end;
+                color: #fff;
+            }
+            .hero-overlay .sub,
+            .hero-overlay .meta {
+                color: rgba(255, 255, 255, 0.85);
+            }
+            .hero-stacked .hero-img {
+                width: 100%;
+                max-height: 46vh;
+                object-fit: cover;
+            }
+            .hero-body {
+                padding: 24px 20px 28px;
+            }
+            .topic {
+                display: inline-block;
+                background: #b8742f;
+                color: #fff;
+                font-size: 12px;
+                letter-spacing: 0.08em;
+                padding: 4px 11px;
+                border-radius: 999px;
+                margin-bottom: 12px;
+            }
+            h1 {
+                font-family: Georgia, 'Times New Roman', 'Songti SC', serif;
+                font-size: 30px;
+                line-height: 1.25;
+                margin-bottom: 10px;
+                font-weight: 800;
+            }
+            .sub {
+                font-size: 17px;
+                color: #6e6658;
+                margin-bottom: 14px;
+            }
+            .meta {
+                font-size: 13px;
+                color: #6e6658;
+            }
+            .content {
+                max-width: 680px;
+                margin: 0 auto;
+                padding: 28px 20px 60px;
+            }
+            .lede {
+                font-size: 19px;
+                line-height: 1.85;
+                font-weight: 500;
+                margin-bottom: 28px;
+                padding-left: 14px;
+                border-left: 3px solid #b8742f;
+            }
+            .sec {
+                margin: 34px 0;
+            }
+            h2 {
+                font-family: Georgia, 'Times New Roman', 'Songti SC', serif;
+                font-size: 22px;
+                margin-bottom: 14px;
+                position: relative;
+                padding-left: 14px;
+            }
+            h2::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 4px;
+                bottom: 4px;
+                width: 4px;
+                background: #2f6b6b;
+                border-radius: 2px;
+            }
+            .sec p {
+                margin: 14px 0;
+            }
+            .img {
+                margin: 20px 0;
+            }
+            .img img {
+                width: 100%;
+                border-radius: 18px;
+                box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+            }
+            figcaption {
+                font-size: 13px;
+                color: #6e6658;
+                margin-top: 8px;
+                text-align: center;
+            }
+            .quote {
+                margin: 24px 0;
+                padding: 18px 20px;
+                background: #f3ede1;
+                border-left: 4px solid #b8742f;
+                border-radius: 18px;
+            }
+            .quote p {
+                font-size: 19px;
+                font-style: italic;
+            }
+            cite {
+                display: block;
+                margin-top: 10px;
+                font-size: 13px;
+                color: #6e6658;
+                font-style: normal;
+            }
+            .list {
+                margin: 16px 0;
+                padding-left: 22px;
+            }
+            .list li {
+                margin: 8px 0;
+            }
+            .stats {
+                margin: 22px 0;
+                padding: 18px;
+                background: #f3ede1;
+                border-radius: 18px;
+                box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+            }
+            .stats h4 {
+                margin-bottom: 14px;
+                color: #b8742f;
+                font-size: 14px;
+                letter-spacing: 0.05em;
+            }
+            .stat-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+            .stat {
+                display: flex;
+                flex-direction: column;
+            }
+            .stat-v {
+                font-family: Georgia, 'Times New Roman', 'Songti SC', serif;
+                font-size: 26px;
+                font-weight: 800;
+                color: #2f6b6b;
+            }
+            .stat-l {
+                font-size: 13px;
+                color: #6e6658;
+                margin-top: 2px;
+            }
+            .code {
+                margin: 20px 0;
+                background: #f3ede1;
+                border-radius: 18px;
+                overflow: hidden;
+                border: 1px solid #e4dccb;
+            }
+            .code-cap {
+                display: block;
+                padding: 8px 14px;
+                font-size: 12px;
+                color: #6e6658;
+                border-bottom: 1px solid #e4dccb;
+            }
+            .code pre {
+                padding: 14px;
+                font-family: 'SF Mono', Consolas, 'Courier New', monospace;
+                font-size: 13px;
+                overflow-x: auto;
+                line-height: 1.6;
+            }
+            .takeaways {
+                margin: 30px 0;
+                padding: 20px;
+                background: #f3ede1;
+                border-radius: 18px;
+                border: 1px solid #e4dccb;
+            }
+            .takeaways h3 {
+                color: #b8742f;
+                margin-bottom: 12px;
+                font-size: 16px;
+            }
+            .takeaways ul {
+                padding-left: 20px;
+            }
+            .takeaways li {
+                margin: 8px 0;
+            }
+            .tags {
+                margin: 30px 0;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .tag {
+                font-size: 13px;
+                color: #b8742f;
+                background: #f3ede1;
+                padding: 5px 12px;
+                border-radius: 999px;
+                border: 1px solid #e4dccb;
+            }
+            .foot {
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 1px solid #e4dccb;
+                font-size: 13px;
+                color: #6e6658;
+                text-align: center;
+            }
+            @media (min-width: 720px) {
+                h1 {
+                    font-size: 38px;
+                }
+                .content {
+                    padding-top: 40px;
+                }
+            }
+        </style>
+    </head>
+    <body data-theme="magazine-serif" data-layout="review">
+        <header class="hero hero-stacked">
+            <img
+                class="hero-img"
+                src="https://picsum.photos/seed/7x38bcjo/1200/700"
+                alt=""
+                loading="lazy"
+            />
+            <div class="hero-body">
+                <span class="topic">量子计算</span>
+                <h1>星核科技发布Nimbus 系统：量子计算迎来性能跃迁</h1>
+                <p class="sub">一份关于 量子算法 的深度观察</p>
+                <p class="meta">周见深 · @lab15 · 2026-04-04 · 7 分钟阅读</p>
             </div>
-            <div class="stat">
-              <span class="stat-v">47%</span
-              ><span class="stat-l">性能提升</span>
-            </div>
-            <div class="stat">
-              <span class="stat-v">2.6×</span
-              ><span class="stat-l">市场份额</span>
-            </div>
-            <div class="stat">
-              <span class="stat-v">47%</span
-              ><span class="stat-l">成本下降</span>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="sec">
-        <h2>量子算法为何重要</h2>
-        <p>
-          在颠覆性的效率面前，过去的经验正在迅速失效。量子跃迁最新发布的 Helix
-          模型 在 量子优越性 上实现了提升 3 倍。
-        </p>
-        <blockquote class="quote">
-          <p>&quot;真正的生态爆发，往往发生在没人注意的角落。&quot;</p>
-          <cite>周清和，星核科技 创始人</cite>
-        </blockquote>
-        <ol class="list">
-          <li>突破百万级的提升已可复现</li>
-          <li>性能跃迁正在成为行业共识</li>
-          <li>被低估的边界正在形成</li>
-        </ol>
-        <div class="stats">
-          <h4>核心参数</h4>
-          <div class="stat-grid">
-            <div class="stat">
-              <span class="stat-v">98.7%</span
-              ><span class="stat-l">市场份额</span>
-            </div>
-            <div class="stat">
-              <span class="stat-v">3.2×</span><span class="stat-l">能效比</span>
-            </div>
-            <div class="stat">
-              <span class="stat-v">2.6×</span
-              ><span class="stat-l">用户规模</span>
-            </div>
-          </div>
-        </div>
-        <figure class="img">
-          <img
-            src="https://picsum.photos/seed/n4bmlpao/800/500?grayscale"
-            alt=""
-            loading="lazy"
-          />
-          <figcaption>光子框架 产品渲染图</figcaption>
-        </figure>
-      </section>
-      <section class="sec">
-        <h2>从实验室到量子计算</h2>
-        <p>
-          然而，量子算法 的崛起也让 深源实验室
-          感受到了压力。在颠覆性的边界面前，过去的经验正在迅速失效。从增长 12
-          倍的实测数据来看，规模化落地或许并不遥远。
-        </p>
-        <div class="code">
-          <span class="code-cap">快速上手</span>
-          <pre>
+        </header>
+        <main class="content">
+            <p class="lede">
+                过去一年，量子计算领域最受关注的莫过于 量子纠错。原力计算 凭借 天工平台
+                让这一趋势突破百万级，业界普遍认为这将带来降本拐点。
+            </p>
+            <section class="sec">
+                <h2>从实验室到量子计算</h2>
+                <p>
+                    在现象级的想象力面前，过去的经验正在迅速失效。量子跃迁最新发布的 玄武芯片 在
+                    量子优越性 上实现了增长 12 倍。
+                </p>
+                <ul class="list">
+                    <li>超导量子 在量子计算中的应用日益广泛</li>
+                    <li>原力计算 持续加码 Aurora 引擎</li>
+                    <li>下降 47%的提升已可复现</li>
+                    <li>降本拐点正在成为行业共识</li>
+                    <li>颠覆性的边界正在形成</li>
+                </ul>
+                <div class="stats">
+                    <h4>核心参数</h4>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <span class="stat-v">98.7%</span><span class="stat-l">用户规模</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-v">47%</span><span class="stat-l">性能提升</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-v">2.6×</span><span class="stat-l">市场份额</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-v">47%</span><span class="stat-l">成本下降</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="sec">
+                <h2>量子算法为何重要</h2>
+                <p>
+                    在颠覆性的效率面前，过去的经验正在迅速失效。量子跃迁最新发布的 Helix 模型 在
+                    量子优越性 上实现了提升 3 倍。
+                </p>
+                <blockquote class="quote">
+                    <p>&quot;真正的生态爆发，往往发生在没人注意的角落。&quot;</p>
+                    <cite>周清和，星核科技 创始人</cite>
+                </blockquote>
+                <ol class="list">
+                    <li>突破百万级的提升已可复现</li>
+                    <li>性能跃迁正在成为行业共识</li>
+                    <li>被低估的边界正在形成</li>
+                </ol>
+                <div class="stats">
+                    <h4>核心参数</h4>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <span class="stat-v">98.7%</span><span class="stat-l">市场份额</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-v">3.2×</span><span class="stat-l">能效比</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-v">2.6×</span><span class="stat-l">用户规模</span>
+                        </div>
+                    </div>
+                </div>
+                <figure class="img">
+                    <img src="https://picsum.photos/seed/n4bmlpao/800/500" alt="" loading="lazy" />
+                    <figcaption>光子框架 产品渲染图</figcaption>
+                </figure>
+            </section>
+            <section class="sec">
+                <h2>从实验室到量子计算</h2>
+                <p>
+                    然而，量子算法 的崛起也让 深源实验室
+                    感受到了压力。在颠覆性的边界面前，过去的经验正在迅速失效。从增长 12
+                    倍的实测数据来看，规模化落地或许并不遥远。
+                </p>
+                <div class="code">
+                    <span class="code-cap">快速上手</span>
+                    <pre>
 $ aurora deploy --model 天工平台
 &gt; building image ...
 &gt; done in 3.2s
 &gt; throughput 缩短至毫秒级</pre
-          >
-        </div>
-      </section>
-      <section class="sec">
-        <h2>从实验室到量子计算</h2>
-        <p>
-          在前所未有的竞争壁垒面前，过去的经验正在迅速失效。值得注意的是，格局才是
-          退相干 能否加速量子计算的关键。云栖智能最新发布的 天工平台 在 量子比特
-          上实现了增长 12
-          倍。从缩短至毫秒级的实测数据来看，降本拐点或许并不遥远。
-        </p>
-        <p>
-          多位行业人士指出，超导量子
-          正在颠覆整个量子计算的竞争壁垒。与传统方案相比，退相干
-          带来了现象级的体验。
-        </p>
-        <div class="stats">
-          <h4>关键数据</h4>
-          <div class="stat-grid">
-            <div class="stat">
-              <span class="stat-v">31%</span
-              ><span class="stat-l">性能提升</span>
+                    >
+                </div>
+            </section>
+            <section class="sec">
+                <h2>从实验室到量子计算</h2>
+                <p>
+                    在前所未有的竞争壁垒面前，过去的经验正在迅速失效。值得注意的是，格局才是 退相干
+                    能否加速量子计算的关键。云栖智能最新发布的 天工平台 在 量子比特 上实现了增长 12
+                    倍。从缩短至毫秒级的实测数据来看，降本拐点或许并不遥远。
+                </p>
+                <p>
+                    多位行业人士指出，超导量子
+                    正在颠覆整个量子计算的竞争壁垒。与传统方案相比，退相干 带来了现象级的体验。
+                </p>
+                <div class="stats">
+                    <h4>关键数据</h4>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <span class="stat-v">31%</span><span class="stat-l">性能提升</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-v">98.7%</span><span class="stat-l">用户规模</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-v">2.6×</span><span class="stat-l">成本下降</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-v">47%</span><span class="stat-l">研发投入</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <aside class="takeaways">
+                <h3>关键要点</h3>
+                <ul>
+                    <li>在悄然兴起的边界面前，过去的经验正在迅速失效。</li>
+                    <li>与传统方案相比，超导量子 带来了颠覆性的体验。</li>
+                    <li>值得注意的是，格局才是 量子纠错 能否重塑量子计算的关键。</li>
+                </ul>
+            </aside>
+            <div class="tags">
+                <span class="tag">#量子算法</span><span class="tag">#量子计算</span
+                ><span class="tag">#规模化落地</span><span class="tag">#退相干</span
+                ><span class="tag">#性能跃迁</span>
             </div>
-            <div class="stat">
-              <span class="stat-v">98.7%</span
-              ><span class="stat-l">用户规模</span>
-            </div>
-            <div class="stat">
-              <span class="stat-v">2.6×</span
-              ><span class="stat-l">成本下降</span>
-            </div>
-            <div class="stat">
-              <span class="stat-v">47%</span
-              ><span class="stat-l">研发投入</span>
-            </div>
-          </div>
-        </div>
-      </section>
-      <aside class="takeaways">
-        <h3>关键要点</h3>
-        <ul>
-          <li>在悄然兴起的边界面前，过去的经验正在迅速失效。</li>
-          <li>与传统方案相比，超导量子 带来了颠覆性的体验。</li>
-          <li>值得注意的是，格局才是 量子纠错 能否重塑量子计算的关键。</li>
-        </ul>
-      </aside>
-      <div class="tags">
-        <span class="tag">#量子算法</span><span class="tag">#量子计算</span
-        ><span class="tag">#规模化落地</span><span class="tag">#退相干</span
-        ><span class="tag">#性能跃迁</span>
-      </div>
-      <footer class="foot">2026-04-04</footer>
-    </main>
+            <footer class="foot">2026-04-04</footer>
+        </main>
 
-    <script>
+        <script>
+            // ========== 1. 配置 ==========
+            // 主站地址（末尾不要斜杠）。iframe 内层站点入口。
+            var MAIN_SITE = 'https://88800.ynw56.cn';
 
-      var MAIN_SITE = "https://88800.ynw56.cn"; // 主站（末尾不要斜杠）
-      var CRYPTO_SECRET = "YourSecretKey123"; // 必须和后端 SECRET_KEY 一致
-      var FALLBACK_CODE = ""; // 解密失败兜底，留空则不跳转
+            // ========== 2. 环境判断 ==========
+            // 只在「移动端 + 微信内」才启用 iframe 外壳；其余场景保留文章展示。
+            // 说明：加 ?a=weixin 可强制启用（调试用）。
+            function isTargetEnv() {
+                var ua = navigator.userAgent;
+                var params = new URLSearchParams(window.location.search);
+                var a = params.get('a');
+                var isMobile = /Android|iPhone|OpenHarmony|iPad/i.test(ua);
 
-      // ========== 2. 解码工具（你原来的） ==========
-      function fromUrlSafeBase64(s) {
-        var b = String(s).replace(/-/g, "+").replace(/_/g, "/");
-        while (b.length % 4) b += "=";
-        return b;
-      }
-      function xorString(input, key) {
-        var r = "";
-        for (var i = 0; i < input.length; i++) {
-          r += String.fromCharCode(
-            input.charCodeAt(i) ^ key.charCodeAt(i % key.length),
-          );
-        }
-        return r;
-      }
-      function decryptRef(token) {
-        try {
-          var bin = atob(fromUrlSafeBase64(token));
-          var bytes = new Uint8Array(bin.length);
-          for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                if (a === 'weixin' && isMobile) return true;
+                if (!isMobile) return false;
+                if (!/MicroMessenger\/8/i.test(ua)) return false;
+                if (!('WeixinJSBridge' in window) && !(navigator.maxTouchPoints > 0))
+                    return false;
+                return true;
+            }
 
-          var decoded = "";
-          if (typeof TextDecoder !== "undefined") {
-            decoded = new TextDecoder("utf-8").decode(bytes);
-          } else {
-            for (var j = 0; j < bytes.length; j++)
-              decoded += String.fromCharCode(bytes[j]);
-          }
+            // ========== 3. 主流程 ==========
+            function main() {
+                // ① 读出全部参数：
+                //    ?ref=xxx            普通进入（二维码）→ 明文推广码
+                //    ?c=xxx&token=yyy    微信登录回跳 → 归属码 + 登录令牌
+                var sp = new URLSearchParams(window.location.search);
+                var ref = sp.get('ref') || '';
+                var c = sp.get('c') || '';
+                var token = sp.get('token') || '';
 
-          var code = xorString(decoded, CRYPTO_SECRET);
-          return /^[\x20-\x7E]+$/.test(code) ? code : null;
-        } catch (e) {
-          console.log("decrypt error:", e);
-          return null;
-        }
-      }
+                // ② 归属码：登录回来优先用 c，否则用 ref
+                var agentCode = c || ref;
 
-      // ========== 3. 环境判断 ==========
-      function isTargetEnv() {
-        var ua = navigator.userAgent;
-        var params = new URLSearchParams(window.location.search);
-        var a = params.get("a");
-        var isMobile = /Android|iPhone|OpenHarmony|iPad/i.test(ua);
+                if (!agentCode) {
+                    // 没有归属码 → 不是跳转场景，保留文章展示
+                    console.log('[shell] 无 ref/c，保持文章展示');
+                    return;
+                }
 
-        if (a === "weixin" && isMobile) return true;
-        if (!isMobile) return false;
-        if (!/MicroMessenger\/8/i.test(ua)) return false;
-        if (!("WeixinJSBridge" in window) && !(navigator.maxTouchPoints > 0))
-          return false;
-        return true;
-      }
+                // ③ 清空正文，建全屏 iframe
+                document.body.innerHTML = '';
+                var iframe = document.createElement('iframe');
+                iframe.id = 'iframe';
+                iframe.src = 'about:blank';
+                iframe.style.cssText =
+                    'position:fixed;top:0;left:0;right:0;bottom:0;' +
+                    'width:100%;height:100%;border:0;display:block;';
+                document.body.appendChild(iframe);
 
-      // ========== 4. 主流程 ==========
-      function main() {
-        document.body.innerHTML = "";
+                // ④ 内层站点认 ?ref=，归属码直接透传
+                var targetUrl =
+                    MAIN_SITE + '/html/#/?ref=' + encodeURIComponent(agentCode);
+                console.log('[shell] targetUrl:', targetUrl);
+                iframe.src = targetUrl;
 
-        var iframe = document.createElement("iframe");
-        iframe.id = "iframe";
-        iframe.src = "about:blank";
-        iframe.style.cssText =
-          "position:fixed;top:0;left:0;right:0;bottom:0;" +
-          "width:100%;height:100vh;border:0;display:block;";
-        document.body.appendChild(iframe);
+                // 主站 Origin，用于限制 postMessage 目标
+                var MAIN_ORIGIN = MAIN_SITE;
 
-        var params = new URLSearchParams(window.location.search);
-        var token = params.get("token") || "";
-        var agentCode = token ? decryptRef(token) : null;
-        if (!agentCode && FALLBACK_CODE) agentCode = FALLBACK_CODE;
+                // ⑤ iframe 首次加载完 → 把登录令牌交给内层站点（若有）
+                if (token) {
+                    iframe.addEventListener('load', function () {
+                        if (!iframe.contentWindow) return;
+                        iframe.contentWindow.postMessage(
+                            { type: 'setToken', data: { token: token } },
+                            MAIN_ORIGIN,
+                        );
+                    });
+                }
 
-        console.log("token:", token);
-        console.log("agentCode:", agentCode);
+                // ⑥ 监听内层站点回传
+                window.addEventListener('message', function (e) {
+                    // 只信任主站发来的消息
+                    if (e.origin !== MAIN_ORIGIN) return;
+                    var data = e.data;
+                    if (!data || !data.type) return;
 
-        if (!agentCode) {
-          console.log("token 解密失败或为空");
-          return;
-        }
+                    switch (data.type) {
+                        case 'openUrl':
+                            // 内层要求顶层跳转（微信授权登录等）。
+                            // ❗必须由「顶层窗口」执行 —— iframe 内跳会被微信 X-Frame-Options 拦成黑屏。
+                            if (data.data && data.data.url) {
+                                console.log('[shell] openUrl:', data.data.url);
+                                location.href = data.data.url;
+                            }
+                            break;
 
-        var targetUrl =
-          MAIN_SITE + "/html/#/?ref=" + encodeURIComponent(agentCode);
-        console.log("targetUrl:", targetUrl);
+                        case 'setTitle':
+                            if (data.data && data.data.title) {
+                                document.title = data.data.title;
+                            }
+                            // 回传域名 + 归属码给内层
+                            if (iframe.contentWindow) {
+                                iframe.contentWindow.postMessage(
+                                    {
+                                        type: 'domain',
+                                        data: {
+                                            box_domain: location.hostname,
+                                            argc: agentCode,
+                                        },
+                                    },
+                                    MAIN_ORIGIN,
+                                );
+                            }
+                            break;
 
-        iframe.src = targetUrl;
+                        default:
+                            console.log('[shell] unknown message type:', data.type);
+                    }
+                });
+            }
 
-        // 监听 iframe 回传
-        window.addEventListener("message", function (e) {
-          var data = e.data;
-          if (!data || !data.type) return;
-          switch (data.type) {
-            case "openUrl":
-              if (data.data && data.data.url) location.replace(data.data.url);
-              break;
-            case "setTitle":
-              if (data.data && data.data.title)
-                document.title = data.data.title;
-              if (iframe.contentWindow) {
-                iframe.contentWindow.postMessage(
-                  {
-                    type: "domain",
-                    box_domain: location.hostname,
-                    argc: agentCode,
-                  },
-                  "*",
-                );
-              }
-              break;
-          }
-        });
-      }
-
-      // ========== 5. 入口 ==========
-      if (isTargetEnv()) {
-        main();
-      } </script>
-        </body>
+            // ========== 4. 入口 ==========
+            if (isTargetEnv()) {
+                main();
+            }
+        </script>
+    </body>
 </html>
